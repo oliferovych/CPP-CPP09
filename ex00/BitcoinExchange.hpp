@@ -6,7 +6,7 @@
 /*   By: dolifero <dolifero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 16:40:27 by dolifero          #+#    #+#             */
-/*   Updated: 2024/12/03 22:33:19 by dolifero         ###   ########.fr       */
+/*   Updated: 2024/12/03 22:38:20 by dolifero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <iomanip>
 
 #define DATA_SIZE 1612
 

@@ -6,7 +6,7 @@
 /*   By: dolifero <dolifero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 16:45:28 by dolifero          #+#    #+#             */
-/*   Updated: 2024/12/03 22:35:21 by dolifero         ###   ########.fr       */
+/*   Updated: 2024/12/03 22:38:02 by dolifero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,11 +123,11 @@ void BitcoinExchange::exchange(std::string input)
 		int diff = stoi(removeDashes(date)) - stoi(removeDashes(this->_data[0].first));
 		for(int i = 0; i < DATA_SIZE; i++)
 		{
-			int num_date = stoi(removeDashes(date));
+			int num_input_date = stoi(removeDashes(date));
 			int num_data_date = stoi(removeDashes(this->_data[i].first));
-			if(std::abs(num_data_date - num_date) < diff && num_data_date < num_date)
+			if(std::abs(num_data_date - num_input_date) < diff && num_data_date < num_input_date)
 			{
-				diff = std::abs(num_data_date - num_date);
+				diff = std::abs(num_data_date - num_input_date);
 				closest = this->_data[i];
 			}
 		}
