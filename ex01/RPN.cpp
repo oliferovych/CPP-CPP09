@@ -6,7 +6,7 @@
 /*   By: dolifero <dolifero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:02:17 by dolifero          #+#    #+#             */
-/*   Updated: 2024/12/05 12:35:54 by dolifero         ###   ########.fr       */
+/*   Updated: 2024/12/06 21:10:04 by dolifero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,10 @@ RPN::RPN()
 {
 }
 
-RPN::RPN(RPN const & src)
+RPN::RPN(RPN const & src) : stack(src.stack)
 {
 	if(this != &src)
 	{
-		if(src.stack.size())
-		{
-			for(unsigned int i = 0; i < src.stack.size(); i++)
-				stack.push_back(src.stack[i]);
-		}
 		*this = src;
 	}
 }
@@ -32,20 +27,12 @@ RPN::RPN(RPN const & src)
 RPN & RPN::operator=(RPN const & src)
 {
 	if(this != &src)
-	{
-		if(src.stack.size())
-		{
-			for(unsigned int i = 0; i < src.stack.size(); i++)
-				stack.push_back(src.stack[i]);
-		}
-	}
+		stack = src.stack;
 	return *this;
 }
 
 RPN::~RPN()
 {
-	if(stack.size())
-		stack.clear();
 }
 
 bool RPN::checkInput(std::string input)
@@ -66,65 +53,53 @@ void err(std::string msg)
 	std::cerr << msg << std::endl;
 }
 
-std::vector<std::string> split(const std::string& str, char delimiter)
+std::queue<std::string> split(const std::string& str, char delimiter)
 {
-	std::vector<std::string> tokens;
+	std::queue<std::string> tokens;
 	std::string token;
 	std::istringstream tokenStream(str);
 
 	while (std::getline(tokenStream, token, delimiter))
-		tokens.push_back(token);
+		tokens.push(token);
 	return tokens;
 }
 
 void RPN::calculate(std::string input)
 {
-	std::vector<std::string> tokens;
-	unsigned int tmp;
+	std::queue<std::string> tokens;
+	double tmp;
 
 	tokens = split(input, ' ');
 	while(tokens.size())
 	{
-		if(tokens[0].length() != 1)
+		std::string token = tokens.front();
+		tokens.pop();
+		if(token.length() != 1)
 			return err("Error: bad input.");
-		if(std::isdigit(tokens[0][0]))
-			tmp = std::stoi(tokens[0]);
-		if(tokens[0][0] == '+')
+		if(std::isdigit(token[0]))
+			tmp = std::stoi(token);
+		else
 		{
 			if(stack.size() < 2)
 				return err("Error: not enough operands.");
-			tmp = stack[stack.size() - 2] + stack[stack.size() - 1];
-			stack.pop_back();
-			stack.pop_back();
+			double b = stack.top(); stack.pop();
+			double a = stack.top(); stack.pop();
+			if(token[0] == '+')
+				tmp = a + b;
+			else if(token[0] == '-')
+				tmp = a - b;
+			else if(token[0] == '*')
+				tmp = a * b;
+			else if(token[0] == '/')
+			{
+				if(b == 0)
+					return err("Error: division by zero.");
+				tmp = a / b;
+			}
 		}
-		if(tokens[0][0] == '-')
-		{
-			if(stack.size() < 2)
-				return err("Error: not enough operands.");
-			tmp = stack[stack.size() - 2] - stack[stack.size() - 1];
-			stack.pop_back();
-			stack.pop_back();
-		}
-		if(tokens[0][0] == '*')
-		{
-			if(stack.size() < 2)
-				return err("Error: not enough operands.");
-			tmp = stack[stack.size() - 2] * stack[stack.size() - 1];
-			stack.pop_back();
-			stack.pop_back();
-		}
-		if(tokens[0][0] == '/')
-		{
-			if(stack.size() < 2)
-				return err("Error: not enough operands.");
-			if(stack[stack.size() - 1] == 0)
-				return err("Error: division by zero.");
-			tmp = stack[stack.size() - 2] / stack[stack.size() - 1];
-			stack.pop_back();
-			stack.pop_back();
-		}
-		stack.push_back(tmp);
-		tokens.erase(tokens.begin());
+		stack.push(tmp);
 	}
-	std::cout << stack[0] << std::endl;
+	if(stack.size() != 1)
+		return err("Error: too many operands.");
+	std::cout << stack.top() << std::endl;
 }
