@@ -6,7 +6,7 @@
 /*   By: dolifero <dolifero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:02:17 by dolifero          #+#    #+#             */
-/*   Updated: 2024/12/06 21:10:04 by dolifero         ###   ########.fr       */
+/*   Updated: 2024/12/06 21:12:29 by dolifero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ void RPN::calculate(std::string input)
 	double tmp;
 
 	tokens = split(input, ' ');
+	if(!std::isdigit(tokens.front()[0]))
+		return err("Error: bad input.");
 	while(tokens.size())
 	{
 		std::string token = tokens.front();
