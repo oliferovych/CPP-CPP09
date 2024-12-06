@@ -6,7 +6,7 @@
 /*   By: dolifero <dolifero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 16:45:28 by dolifero          #+#    #+#             */
-/*   Updated: 2024/12/03 22:38:02 by dolifero         ###   ########.fr       */
+/*   Updated: 2024/12/06 20:45:00 by dolifero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ BitcoinExchange::BitcoinExchange(BitcoinExchange const &other)
 	if(this != &other)
 	{
 		for(int i = 0; i < DATA_SIZE; i++)
-			this->_data[i] = other._data[i];
+			this->_data = other._data;
 	}
 }
 
@@ -34,7 +34,7 @@ BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &other)
 	if(this != &other)
 	{
 		for(int i = 0; i < DATA_SIZE; i++)
-			this->_data[i] = other._data[i];
+			this->_data = other._data;
 	}
 	return *this;
 }
@@ -56,7 +56,7 @@ void BitcoinExchange::loadData(void)
 		std::getline(file, line);
 		date = line.substr(0, line.find(','));
 		value = line.substr(line.find(',') + 1);
-		this->_data[i] = std::make_pair(date, std::stod(value));
+		this->_data.insert(std::make_pair(date, std::stod(value)));
 	}
 	file.close();
 }
@@ -120,15 +120,15 @@ void BitcoinExchange::exchange(std::string input)
 	if(checkInput(input, date, value))
 	{
 		std::pair<std::string, double> closest = {"", 0};
-		int diff = stoi(removeDashes(date)) - stoi(removeDashes(this->_data[0].first));
-		for(int i = 0; i < DATA_SIZE; i++)
+		int diff = INT32_MAX;
+		int num_input_date = stoi(removeDashes(date));
+		for(const auto &pair : this->_data)
 		{
-			int num_input_date = stoi(removeDashes(date));
-			int num_data_date = stoi(removeDashes(this->_data[i].first));
+			int num_data_date = stoi(removeDashes(pair.first));
 			if(std::abs(num_data_date - num_input_date) < diff && num_data_date < num_input_date)
 			{
 				diff = std::abs(num_data_date - num_input_date);
-				closest = this->_data[i];
+				closest = pair;
 			}
 		}
 		std::cout << date << " => " << value << " = " << closest.second * value << std::endl;
