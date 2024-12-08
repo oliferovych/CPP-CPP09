@@ -10,3 +10,28 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
+
+#include <vector>
+#include <iostream>
+
+class PmergeMe
+{
+	private:
+		std::vector<int> _input;
+		std::vector<int> _output;
+	public:
+		PmergeMe();
+		PmergeMe(const PmergeMe &other);
+		PmergeMe &operator=(const PmergeMe &other);
+		~PmergeMe();
+		bool checkInput(int ac, char **av);
+		void setInput(int ac, char **av);
+		void mergeSort();
+		void printVector(std::vector<int> vec);
+
+		std::vector<int> getInput() const;
+		std::vector<int> getOutput() const;
+};
+
+std::vector<int> fordJohnsonSort(std::vector<int> input);
