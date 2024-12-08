@@ -23,21 +23,25 @@ int main(int ac, char **av)
 {
 	PmergeMe p;
 	long long init_time;
-	long long sort_time;
+	long long vector_sort_time;
+	long long list_sort_time;
 
 	init_time = get_time();
 	if(!p.checkInput(ac, av))
 		return 1;
 	p.setInput(ac, av);
 	init_time = get_time() - init_time;
-	sort_time = get_time();
-	p.mergeSort();
-	sort_time = get_time() - sort_time;
+	vector_sort_time = get_time();
+	p.vectorSort();
+	vector_sort_time = get_time() - vector_sort_time;
+	list_sort_time = get_time();
+	p.listSort();
+	list_sort_time = get_time() - list_sort_time;
 	std::cout << "Before: ";
-	p.printVector(p.getInput());
+	p.printContainer(p.getVector());
 	std::cout << "After: ";
-	p.printVector(p.getOutput());
-	std::cout << "Time to process a range of " << p.getInput().size() << " integers: " << init_time << "µs" << std::endl;
-	std::cout << "Time to sort a range of " << p.getInput().size() << " integers: " << sort_time << "µs" << std::endl;
+	p.printContainer(p.getOutput());
+	std::cout << "Time to sort given range of " << p.getVector().size() << " integers with std::list: " << list_sort_time + init_time << "µs" << std::endl;
+	std::cout << "Time to sort given range of " << p.getVector().size() << " integers with std::vector: " << vector_sort_time + init_time << "µs" << std::endl;
 	return 0;
 }

@@ -20,8 +20,8 @@ PmergeMe::PmergeMe(const PmergeMe &other)
 {
 	if(this != &other)
 	{
-		_input = other._input;
-		_output = other._output;
+		_vec = other._vec;
+		_list = other._list;
 	}
 }
 
@@ -29,14 +29,16 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &other)
 {
 	if(this != &other)
 	{
-		_input = other._input;
-		_output = other._output;
+		_vec = other._vec;
+		_list = other._list;
 	}
 	return *this;
 }
 
 PmergeMe::~PmergeMe()
 {
+	_vec.clear();
+	_list.clear();
 }
 
 bool PmergeMe::checkInput(int ac, char **av)
@@ -48,14 +50,6 @@ bool PmergeMe::checkInput(int ac, char **av)
 	}
 	for(int i = 1; i < ac; i++)
 	{
-		for(int j = 1; j < ac; j++)
-		{
-			if(av[j] == av[i] && i != j)
-			{
-				std::cerr << "Error: input indexes " << j << " & " << i << ": duplicate input" << std::endl;
-				return false;
-			}
-		}
 		for(int j = 0; av[i][j]; j++)
 		{
 			if(!isdigit(av[i][j]))
@@ -79,12 +73,17 @@ int customAtoi(char *str)
 void PmergeMe::setInput(int ac, char **av)
 {
 	for(int i = 1; i < ac; i++)
-		_input.push_back(customAtoi(av[i]));
+	{
+		_vec.push_back(customAtoi(av[i]));
+		_list.push_back(customAtoi(av[i]));
+	}
 }
 
-std::vector<int> merge(std::vector<int> left, std::vector<int> right)
+
+template <typename Container>
+Container merge(Container left, Container right)
 {
-	std::vector<int> result;
+	Container result;
 	size_t i = 0, j = 0;
 
 	while(i < left.size() && j < right.size())
@@ -113,7 +112,8 @@ std::vector<int> merge(std::vector<int> left, std::vector<int> right)
 	return result;
 }
 
-std::vector<int> fordJohnsonSort(std::vector<int> input)
+template <typename Container>
+Container fordJohnsonSort(Container input)
 {
 	size_t n = input.size();
 
@@ -125,8 +125,8 @@ std::vector<int> fordJohnsonSort(std::vector<int> input)
 			std::swap(input[0], input[1]);
 		return input;
 	}
-	std::vector<int> sorted;
-	std::vector<int> left;
+	Container sorted;
+	Container left;
 	for(size_t i = 0; i + 1 < n; i += 2)
 	{
 		if(input[i] > input[i + 1])
@@ -136,29 +136,30 @@ std::vector<int> fordJohnsonSort(std::vector<int> input)
 	}
 	if(n % 2 == 1)
 		left.push_back(input.back());
-	std::vector<int> sortedLeft = fordJohnsonSort(sorted);
-	std::vector<int> sortedRight = fordJohnsonSort(left);
+	Container sortedLeft = fordJohnsonSort(sorted);
+	Container sortedRight = fordJohnsonSort(left);
 	return (merge(sortedLeft, sortedRight));
 }
 
-void PmergeMe::printVector(std::vector<int> vec)
+template <typename Container>
+void PmergeMe::printContainer(Container vec)
 {
 	for(size_t i = 0; i < vec.size(); i++)
 		std::cout << vec[i] << " ";
 	std::cout << std::endl;
 }
 
-void PmergeMe::mergeSort()
+void PmergeMe::vectorSort()
 {
-	_output = fordJohnsonSort(_input);
+	_vec = fordJohnsonSort(_vec);
 }
 
-std::vector<int> PmergeMe::getInput() const
+std::vector<int> PmergeMe::getVector() const
 {
-	return _input;
+	return _vec;
 }
 
-std::vector<int> PmergeMe::getOutput() const
+std::list<int> PmergeMe::getList() const
 {
-	return _output;
+	return _list;
 }
