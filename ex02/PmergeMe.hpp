@@ -6,7 +6,7 @@
 /*   By: dolifero <dolifero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 20:14:53 by dolifero          #+#    #+#             */
-/*   Updated: 2024/12/06 20:14:54 by dolifero         ###   ########.fr       */
+/*   Updated: 2024/12/09 16:53:12 by dolifero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 class PmergeMe
 {
 	private:
-		std::vector<int> _input;
 		std::vector<int> _vec;
 		std::list<int> _list;
 	public:
@@ -33,9 +32,6 @@ class PmergeMe
 
 		void vectorSort();
 		void listSort();
-
-		template <typename Container>
-		void printContainer(Container vec);
 
 		std::vector<int> getVector() const;
 		std::list<int> getList() const;

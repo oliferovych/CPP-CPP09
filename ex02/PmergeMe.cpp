@@ -6,7 +6,7 @@
 /*   By: dolifero <dolifero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 20:14:50 by dolifero          #+#    #+#             */
-/*   Updated: 2024/12/06 20:14:51 by dolifero         ###   ########.fr       */
+/*   Updated: 2024/12/09 16:53:25 by dolifero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ PmergeMe::PmergeMe()
 
 PmergeMe::PmergeMe(const PmergeMe &other)
 {
-	if(this != &other)
+	if (this != &other)
 	{
 		_vec = other._vec;
 		_list = other._list;
@@ -27,7 +27,7 @@ PmergeMe::PmergeMe(const PmergeMe &other)
 
 PmergeMe &PmergeMe::operator=(const PmergeMe &other)
 {
-	if(this != &other)
+	if (this != &other)
 	{
 		_vec = other._vec;
 		_list = other._list;
@@ -43,16 +43,16 @@ PmergeMe::~PmergeMe()
 
 bool PmergeMe::checkInput(int ac, char **av)
 {
-	if(ac < 2)
+	if (ac < 2)
 	{
 		std::cerr << "Usage: " << av[0] << " [int1] [int2] ... [intN]" << std::endl;
 		return false;
 	}
-	for(int i = 1; i < ac; i++)
+	for (int i = 1; i < ac; i++)
 	{
-		for(int j = 0; av[i][j]; j++)
+		for (int j = 0; av[i][j]; j++)
 		{
-			if(!isdigit(av[i][j]))
+			if (!isdigit(av[i][j]))
 			{
 				std::cerr << "Error: " << av[i] << ": bad input" << std::endl;
 				return false;
@@ -65,49 +65,49 @@ bool PmergeMe::checkInput(int ac, char **av)
 int customAtoi(char *str)
 {
 	int res = 0;
-	for(int i = 0; str[i]; i++)
+	for (int i = 0; str[i]; i++)
 		res = res * 10 + str[i] - '0';
 	return res;
 }
 
 void PmergeMe::setInput(int ac, char **av)
 {
-	for(int i = 1; i < ac; i++)
+	for (int i = 1; i < ac; i++)
 	{
 		_vec.push_back(customAtoi(av[i]));
 		_list.push_back(customAtoi(av[i]));
 	}
 }
 
-
 template <typename Container>
 Container merge(Container left, Container right)
 {
 	Container result;
-	size_t i = 0, j = 0;
+	auto itLeft = left.begin();
+	auto itRight = right.begin();
 
-	while(i < left.size() && j < right.size())
+	while (itLeft != left.end() && itRight != right.end())
 	{
-		if(left[i] < right[j])
+		if (*itLeft < *itRight)
 		{
-			result.push_back(left[i]);
-			i++;
+			result.push_back(*itLeft);
+			++itLeft;
 		}
 		else
 		{
-			result.push_back(right[j]);
-			j++;
+			result.push_back(*itRight);
+			++itRight;
 		}
 	}
-	while(i < left.size())
+	while (itLeft != left.end())
 	{
-		result.push_back(left[i]);
-		i++;
+		result.push_back(*itLeft);
+		++itLeft;
 	}
-	while(j < right.size())
+	while (itRight != right.end())
 	{
-		result.push_back(right[j]);
-		j++;
+		result.push_back(*itRight);
+		++itRight;
 	}
 	return result;
 }
@@ -117,41 +117,43 @@ Container fordJohnsonSort(Container input)
 {
 	size_t n = input.size();
 
-	if(n < 2)
+	if (n < 2)
 		return input;
-	if(n == 2)
+	if (n == 2)
 	{
-		if(input[0] > input[1])
-			std::swap(input[0], input[1]);
+		auto it = input.begin();
+		auto it2 = it++;
+		if (*it > *it2)
+			std::swap(it, it2);
 		return input;
 	}
 	Container sorted;
 	Container left;
-	for(size_t i = 0; i + 1 < n; i += 2)
+	auto it = input.begin();
+	for (size_t i = 0; i + 1 < n; i += 2)
 	{
-		if(input[i] > input[i + 1])
-			std::swap(input[i], input[i + 1]);
-		sorted.push_back(input[i]);
-		left.push_back(input[i + 1]);
+		auto first = it++;
+		auto second = it++;
+		if (*first > *second)
+			std::swap(*first, *second);
+		sorted.push_back(*first);
+		left.push_back(*second);
 	}
-	if(n % 2 == 1)
+	if (n % 2 == 1)
 		left.push_back(input.back());
 	Container sortedLeft = fordJohnsonSort(sorted);
 	Container sortedRight = fordJohnsonSort(left);
 	return (merge(sortedLeft, sortedRight));
 }
 
-template <typename Container>
-void PmergeMe::printContainer(Container vec)
-{
-	for(size_t i = 0; i < vec.size(); i++)
-		std::cout << vec[i] << " ";
-	std::cout << std::endl;
-}
-
 void PmergeMe::vectorSort()
 {
 	_vec = fordJohnsonSort(_vec);
+}
+
+void PmergeMe::listSort()
+{
+	_list = fordJohnsonSort(_list);
 }
 
 std::vector<int> PmergeMe::getVector() const
